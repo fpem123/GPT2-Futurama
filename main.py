@@ -8,12 +8,14 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request, jsonify, render_template
 import torch
-
+from subprocess import call
 from queue import Queue, Empty
 from threading import Thread
 import time
 
 app = Flask(__name__)
+
+print("model loading...")
 
 # Model & Tokenizer loading
 tokenizer = AutoTokenizer.from_pretrained('./GPT2-large_futurama')
@@ -26,6 +28,7 @@ requests_queue = Queue()    # request queue.
 BATCH_SIZE = 1              # max request size.
 CHECK_INTERVAL = 0.1
 
+print("complete model loading")
 
 ##
 # Request handler.
