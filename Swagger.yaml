@@ -42,7 +42,7 @@ paths:
               properties:
                 name:
                   type: string
-                  enum: [Fry]
+                  enum: [Fry, Leela, Bender, Farnsworth, Zoidberg, Wong, Conrad, Scruffington]
                   description: "Futurama character name."
                 text:
                   type: string

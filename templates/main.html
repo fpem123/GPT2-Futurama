@@ -18,7 +18,7 @@
     window.onload = () => {
         time_obj = document.getElementById("timer");
         flag = false;
-        chars = [];
+        chars = ["Fry", "Leela", "Bender", "Farnsworth", "Zoidberg", "Wong", "Conrad", "Scruffington"];
     }
 
     function double_submit_check() {
@@ -165,7 +165,7 @@
             <div class="sample">
                 <h3><label>Example</label></h3>
                 <h5><label>Input</label></h5>
-                <label>&nbsp;&nbsp;Character: Fry<br>&nbsp;&nbsp;Text: Hello everyone</label><br><br>
+                <label>&nbsp;&nbsp;Character: Philip J. Fry<br>&nbsp;&nbsp;Text: Hello everyone</label><br><br>
                 <h5><label>Script</label></h5>
                 <img src="../static/Sample.png" width="100%">
             </div>
@@ -175,8 +175,15 @@
             <div class="generate">
                 <h3>Try it!</h3><br>
                 <label>Character: </label>
-                <select id="name" style="width:110pt">
-                    <option value="Fry">Fry</option>
+                <select id="name" style="width:180pt">
+                    <option value="Fry">Philip J. Fry</option>
+                    <option value="Leela">Turanga Leela</option>
+                    <option value="Bender">Bender Bending Rodríguez</option>
+                    <option value="Farnsworth">Hubert J. Farnsworth</option>
+                    <option value="Zoidberg">John A. Zoidberg</option>
+                    <option value="Wong">Amy Wong</option>
+                    <option value="Conrad">Hermes Conrad</option>
+                    <option value="Scruffington">Scruffy Scruffington</option>
                 </select><br>
                 <label>Text: </label>
                 <input type="text" id="text" style="width:40%">

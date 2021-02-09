@@ -32,7 +32,7 @@ Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-t
 
 ## * With CLI *
 
-        
+        curl -X POST "https://master-gpt2-futurama-fpem123.endpoint.ainize.ai/futurama" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "name=Fry" -F "text=Hello" -F "length=150"
 
 ## * With swagger *
 
