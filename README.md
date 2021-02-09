@@ -28,7 +28,7 @@ Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-t
 
 ### Image reference
 
-    static/README.md
+[static/README.md](https://github.com/fpem123/GPT2-Futurama/blob/master/static/README.md)
 
 ## * With CLI *
 
