@@ -28,7 +28,7 @@ Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-t
 
 ### Output foramt
 
-    {"0", [[character name, dialog], [character name, dialog], ...]}
+    {"0": [[character name, dialog], [character name, dialog], ...]}
 
 
 ### Image reference
