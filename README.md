@@ -24,7 +24,12 @@ Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-t
 
     name: The Futurama character name.
     text: The base of script.
-    length: The size of generated text.
+    length: The size of generated text. (min: 50)
+
+### Output foramt
+
+    {"0", [[character name, dialog], [character name, dialog], ...]}
+
 
 ### Image reference
 
@@ -32,7 +37,33 @@ Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-t
 
 ## * With CLI *
 
-    curl -X POST "https://master-gpt2-futurama-fpem123.endpoint.ainize.ai/futurama" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "name=Fry" -F "text=Hello" -F "length=150"
+#### Input example
+
+    curl -X POST "https://master-gpt2-futurama-fpem123.endpoint.ainize.ai/futurama" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "name=Fry" -F "text=Hello," -F "length=50"
+
+#### Output example
+
+    {
+      "0": [
+        [
+          "Fry",
+          " Hello, there."
+        ],
+        [
+          "Leela",
+          " Good to see you."
+        ],
+        [
+          "Fry",
+          " You?"
+        ],
+        [
+          "Leela",
+          " And me."
+        ],
+        ...
+      ]
+    }
 
 ## * With swagger *
 
