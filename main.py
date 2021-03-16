@@ -5,134 +5,48 @@
     update: 21.02.08
 '''
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from flask import Flask, request, jsonify, render_template
-import torch
-from subprocess import call
-from queue import Queue, Empty
-from threading import Thread
-import time
+import requests
+import json
 
 app = Flask(__name__)
-
-print("model loading...")
-
-# Model & Tokenizer loading
-tokenizer = AutoTokenizer.from_pretrained('./GPT2-large_futurama')
-model = AutoModelForCausalLM.from_pretrained('./GPT2-large_futurama')
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model.to(device)
-
-requests_queue = Queue()    # request queue.
-BATCH_SIZE = 1              # max request size.
-CHECK_INTERVAL = 0.1
-
-print("complete model loading")
-
-##
-# Request handler.
-# GPU app can process only one request in one time.
-def handle_requests_by_batch():
-    while True:
-        request_batch = []
-
-        while not (len(request_batch) >= BATCH_SIZE):
-            try:
-                request_batch.append(requests_queue.get(timeout=CHECK_INTERVAL))
-            except Empty:
-                continue
-
-            for requests in request_batch:
-                try:
-                    requests["output"] = mk_futurama_script(requests['input'][0], requests['input'][1], requests['input'][2])
-                except Exception as e:
-                    requests["output"] = e
-
-
-handler = Thread(target=handle_requests_by_batch).start()
-
-
-##
-# GPT-2 generator.
-# Make futurama script.
-def mk_futurama_script(name, text, length):
-    try:
-        text = name + ': ' + text.strip()
-        input_ids = tokenizer.encode(text, return_tensors='pt')
-
-        # input_ids also need to apply gpu device!
-        input_ids = input_ids.to(device)
-
-        min_length = len(input_ids.tolist()[0])
-        length += min_length
-
-        length = length if length > 50 else 50
-
-        # model generating
-        sample_outputs = model.generate(input_ids, pad_token_id=50256,
-                                        do_sample=True,
-                                        max_length=length,
-                                        min_length=min_length,
-                                        top_k=40,
-                                        num_return_sequences=1)
-
-        result = dict()
-
-        for idx, sample_output in enumerate(sample_outputs):
-            futurama_story = tokenizer.decode(sample_output, skip_special_tokens=True).split('\n')
-
-            for i in range(len(futurama_story)):
-                if futurama_story[i]:
-                    if futurama_story[i][0] in ['(', '[']:
-                        futurama_story[i] = ['Narrator', futurama_story[i]]
-                    elif ':' in futurama_story[i]:
-                        futurama_story[i] = futurama_story[i].split(':')
-                    else:
-                        futurama_story[i] = [futurama_story[i - 1][0], futurama_story[i]]
-                else:
-                    continue
-
-            result[idx] = futurama_story
-
-        return result
-
-    except Exception as e:
-        print('Error occur in script generating!', e)
-        return jsonify({'error': e}), 500
-
 
 ##
 # Get post request page.
 @app.route('/futurama', methods=['POST'])
 def generate():
-    # GPU app can process only one request in one time.
-    if requests_queue.qsize() > BATCH_SIZE:
-        return jsonify({'Error': 'Too Many Requests'}), 429
-
     try:
-        args = []
-
         name = request.form['name']
         text = request.form['text']
         length = int(request.form['length'])
+        URL = 'https://feature-add-torch-serve-gpt-2-server-gkswjdzz.endpoint.ainize.ai/infer/gpt2-large_Futurama_50'
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        res = requests.post(URL, headers=headers, data=json.dumps({
+            'text': f'{name}: {text}',
+            'num_samples': 1,
+            'length': length
+        }))
 
-        args.append(name)
-        args.append(text)
-        args.append(length)
+        sample_outputs = res.json()
 
+        result = []
+        futurama_stories = sample_outputs['0'].split('\n')
+
+        for idx, futurama_story in enumerate(futurama_stories):
+            if idx == len(futurama_stories) - 1:
+                break
+            if futurama_story and ': ' in futurama_story:
+                    splitted = futurama_story.split(':')
+                    print(splitted[0],splitted[1])
+                    result.append([splitted[0], splitted[1]])
+            else:
+                continue
+
+        return jsonify({0: result}), 200
     except Exception as e:
-        return jsonify({'message': 'Invalid request'}), 500
-
-    # input a request on queue
-    req = {'input': args}
-    requests_queue.put(req)
-
-    # wait
-    while 'output' not in req:
-        time.sleep(CHECK_INTERVAL)
-
-    return jsonify(req['output'])
+        return jsonify({'message': e}), 500
 
 
 ##
@@ -160,5 +74,4 @@ def main():
 
 
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, port=80, host='0.0.0.0')
+    app.run(port=8000, host='0.0.0.0', threaded=True)
