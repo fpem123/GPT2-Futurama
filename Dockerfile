@@ -7,9 +7,8 @@ RUN apt-get update && \
     apt-get install -y tar
 
 RUN pip install --upgrade pip && \
-    pip install transformers && \
-    pip install flask && \
-    pip install waitress
+    pip install transformers \
+    flask
 
 WORKDIR /app
 COPY . .
