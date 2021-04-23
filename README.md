@@ -4,6 +4,8 @@
 
 This project generate Futurama script using GPT-2 model.
 
+You can download the model here: [google drive](https://drive.google.com/file/d/1-Nd9RA1C3DngCL-asY_08aveN7y-UYm5/view?usp=sharing)
+
 Fine tuning data: [Kaggle](https://www.kaggle.com/josephvm/futurama-seasons-16-transcripts?select=only_spoken_text.csv)
 
 ### Model information
